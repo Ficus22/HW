@@ -1,0 +1,18 @@
+[package]
+name = "HW"
+version = "0.1.0"
+edition = "2021"
+# Pour indiquer que le projet utilise no_std
+crate-type = ["lib"]
+
+
+[dependencies]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[unstable]
+build-std = ["core"]
