@@ -7,9 +7,6 @@ use core::panic::PanicInfo;
 const PORTB: *mut u8 = 0x25 as *mut u8; // Adresse du registre PORTB
 const DDRB: *mut u8 = 0x24 as *mut u8; // Adresse du registre DDRB
 const PINB: *const u8 = 0x23 as *const u8; // Adresse du registre PINB
-/* [CORRECTION GPIO] 
-    Any operations here will be limited to the I/O registers of port B
-(Don't hesitate to remove this comment)*/
 
 // Fonction d'interruption de panique
 #[panic_handler]
