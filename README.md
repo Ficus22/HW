@@ -16,7 +16,6 @@ Ce projet utilise Rust en mode no_std, ce qui signifie qu'il est compilé sans l
 
 ## Prérequis
 Assurez-vous d'avoir installé la version nightly de Rust ainsi que le composant rust-src :
-rustup install nightly
 rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
 
 ## Commande de compilation
