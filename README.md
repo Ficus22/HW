@@ -20,6 +20,6 @@ rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
 
 ## Commande de compilation
 Pour compiler le projet, utilisez la commande suivante :
-cargo +nightly build -Z build-std=core,alloc --target thumbv7em-none-eabihf -Z build-std-features=panic_immediate_abort
+``cargo +nightly build -Z build-std=core,alloc --target thumbv7em-none-eabihf -Z build-std-features=panic_immediate_abort``
 
 
