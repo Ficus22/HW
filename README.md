@@ -33,6 +33,33 @@ Pour pouvoir compiler notre projet pour l'ESP32, nous avons ajouté une nouvelle
    cargo +nightly build --target xtensa-esp32-none-elf --release --features esp32
    ```
 
+
+## Étape 3 : Ajout de la fonctionnalité SPI
+
+### SPI pour l'ESP32
+Pour intégrer le support SPI sur l'ESP32, nous avons utilisé la bibliothèque HAL d'ESP32, qui simplifie l'interaction avec le matériel. Voici les étapes que nous avons suivies :
+
+1. **Initialisation du SPI** :
+   Nous avons créé une instance SPI en spécifiant le périphérique SPI à utiliser (par exemple, SPI2) et en définissant les broches MISO et MOSI.
+
+2. **Envoi et réception de données** :
+   Nous avons implémenté des fonctions pour envoyer et recevoir des données via SPI. L'envoi est réalisé en utilisant `spi.write(&[data])` et la réception se fait avec `spi.read(&mut buffer)`.
+
+### SPI pour l'ATmega328P
+Pour l'ATmega328P, nous avons directement manipulé les registres SPI disponibles dans le microcontrôleur. Voici comment nous avons procédé :
+
+1. **Définition des registres SPI** :
+   Nous avons défini les registres nécessaires pour contrôler le SPI, tels que le registre de contrôle (SPCR), le registre d'état (SPSR) et le registre de données (SPDR).
+
+2. **Initialisation du SPI** :
+   Nous avons créé une fonction d'initialisation qui configure les registres appropriés pour activer le mode maître et définir la fréquence d'horloge.
+
+3. **Fonctions d'envoi et de réception** :
+   Nous avons également créé des fonctions pour envoyer et recevoir des données via SPI (`spi_send` et `spi_receive`).
+
+### Conclusion
+L'ajout du support SPI pour nos deux cibles a permis d'étendre les capacités de communication de notre projet, facilitant ainsi l'interaction avec divers périphériques externes. Grâce à ces ajouts, notre système est désormais capable de gérer des communications série efficaces tant sur l'ESP32 que sur l'ATmega328P.
+
 ## Compilation du projet en no_std
 Ce projet utilise Rust en mode no_std, ce qui signifie qu'il est compilé sans la bibliothèque standard (std). Cela est nécessaire pour les environnements embarqués ou les systèmes où la bibliothèque standard n'est pas disponible. De plus, le gestionnaire de panic est configuré en mode abort pour éviter l'utilisation du dépliage de la pile, qui n'est pas pris en charge en mode no_std.
 
@@ -51,7 +78,6 @@ ou pour l'ESP32 :
 ```bash
 cargo +nightly build -Z build-std=core,alloc --target xtensa-esp32-none-elf --features esp32
 ```
-
 
 
 ## Problèmes rencontrés
