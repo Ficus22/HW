@@ -20,6 +20,10 @@ mod atmega {
     const DDRB: *mut u8 = 0x24 as *mut u8; // Adresse du registre DDRB
     const PINB: *const u8 = 0x23 as *const u8; // Adresse du registre PINB
 
+    // SPI Registers
+    const SPCR: *mut u8 = 0x2C as *mut u8; // SPI Control Register
+    const SPSR: *mut u8 = 0x2D as *mut u8; // SPI Status Register
+    const SPDR: *mut u8 = 0x2E as *mut u8; // SPI Data Register
 
     /// Configure la broche (pin) comme entrée
     fn pin_mode_input(pin: u8) {
@@ -53,6 +57,26 @@ mod atmega {
         }
     }
 
+    // Initialisation SPI
+    fn spi_init() {
+        unsafe {
+            *SPCR = (1 << 6) | (1 << 4) | (1 << 5); // Enable SPI, Set as Master, Set Clock Rate fck/16
+        }
+    }
+
+   // Envoie de la data via SPI
+    fn spi_send(data: u8) {
+        unsafe {
+            *SPDR = data; // Load data into the buffer
+            while (*SPSR & (1 << 7)) == 0 {} // Wait until transmission complete
+        }
+    }
+
+    // Reception de la data via SPI
+    fn spi_receive() -> u8 {
+        spi_send(0xFF); // Send dummy byte to generate clock
+        unsafe { *SPDR } // Read received data from the buffer
+    }
 
 
     /* FONCTION EXEMPLE
@@ -64,13 +88,19 @@ mod atmega {
     pub extern "C" fn main() -> ! {
         pin_mode_output(2); // Configure la broche 2 comme sortie
         pin_mode_input(3); // Configure la broche 3 comme entrée
+
+        spi_init(); // Initialisation SPI
         
 
         loop {
             digital_write(2, true); // Met la broche 2 à l'état haut
             let _state = digital_read(3); // Lit l'état de la broche 3 sans utiliser la variable
+
+            spi_send(0xA5); // Envoie d'une data exemple
+            let received = spi_receive(); // Reception d'une data exemple
         }
     }
+
 }
 
 
@@ -78,7 +108,7 @@ mod atmega {
 #[cfg(feature = "esp32")]
 mod esp32 {
     use super::*;
-    use esp32_hal::{prelude::*, pac::Peripherals};
+    use esp32_hal::{prelude::*, pac::Peripherals, spi::Spi};
 
     // Définitions des registres GPIO pour l'ESP32
     const GPIO_OUT_REG: *mut u32 = 0x3FF44004 as *mut u32;
@@ -127,9 +157,9 @@ mod esp32 {
 
     #[entry]
     fn main() -> ! {
-        let peripherals = Peripherals::take().unwrap();
-        let system = peripherals.DPORT.split();
-        let clocks = ClockControl::boot_defaults(system.clock_control).freeze();
+        let peripherals = Peripherals::take().unwrap(); // initialisation de l'accès hardware de l'esp32
+        let system = peripherals.DPORT.split(); // séparation des DPORT
+        let clocks = ClockControl::boot_defaults(system.clock_control).freeze(); // initialisation de la clock
 
         // Définition des numéros de GPIO pour l'ESP32
         const GPIO_OUTPUT: u32 = 2;  // Utilisation du GPIO2 comme sortie
@@ -139,9 +169,23 @@ mod esp32 {
         set_gpio_output(GPIO_OUTPUT);  // Configure le GPIO2 comme sortie
         set_gpio_input(GPIO_INPUT);    // Configure le GPIO3 comme entrée
 
+        // initialisation d'une nouvelle instance SPI
+        let mut spi = Spi::new(
+            peripherals.SPI2,
+            (GPIO_OUTPUT, GPIO_INPUT), // MISO, MOSI pins
+            &clocks,
+            spi::MODE_0,
+            1.mhz(),
+        );
+
+
         loop {
             gpio_write(GPIO_OUTPUT, true);  // Met le GPIO2 à l'état haut
             let _state = gpio_read(GPIO_INPUT);  // Lit l'état du GPIO3 sans utiliser la variable
+
+            let _ = spi.write(&[0xA5]); // Envoie d'une data exemple
+            let mut buffer = [0; 1];
+            let _ = spi.read(&mut buffer); // Reception d'une data exemple
         }
     }
 }
