@@ -97,3 +97,11 @@ git add .                 # Ajouter toutes les modifications
 git commit -m "Message"   # Valider les modifications
 git push origin main      # Pousser les modifications vers le dépôt distant
 ```
+
+
+[CORRECTION USART] (Don't hesitate to remove this part)
+Even if you are not using the external HAL that are in the Cargo.toml file, I recommand you remove them from your dependencies, it could generate errors.
+About your use of features, you have to use the same name in the feature declaration in the Cargo.toml file, and its appelation in the code (```[features] atmega = []``` can be call with ```#[cfg(feature = "atmega")]```)
+I recommand you to optimise your code into different file module, instead of writing your code into one big file.
+You didn't implement the USART feature.
+Are you using the generic esp32 series as second target? ( https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf ) ?
