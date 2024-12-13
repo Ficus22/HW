@@ -2,7 +2,6 @@
 #![no_main]
 
 use core::panic::PanicInfo;
-use super::*;
 
 #[cfg(feature = "esp32")]
 mod esp32;
@@ -26,6 +25,8 @@ fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
-fn main{
+fn main()->!{
     fn_ex();
+    loop {
+    }
 }

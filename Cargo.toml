@@ -5,12 +5,6 @@ edition = "2021"
 # Pour indiquer que le projet utilise no_std
 crate-type = ["lib"]
 
-
-[dependencies]
-esp-backtrace = { version = "0.14.2", features = ["esp32", "panic-handler"] }  # Assurez-vous qu'il n'y a qu'une seule ligne pour esp-backtrace
-esp-println = { version = "0.12.0", features = ["esp32"] }
-xtensa-lx-rt = { version = "0.16.0", features = ["esp32"] }
-
 [profile.dev]
 panic = "abort"
 opt-level = 1

@@ -5,7 +5,7 @@ Voici la version mise à jour de votre README, incluant une nouvelle section **�
 ## Équipe
 Nous sommes **Simon ARNOLD** et **Esteban CARRASCO**, du groupe **OCC1** de l'ESILV.
 
-## Étape 1
+## Étape 1 : GPIO
 Dans l'étape 1, nous avons réimplémenté en **RUST** les fonctions `pinMode()`, `digitalRead()` et `digitalWrite()` utilisées lors de la manipulation d'Arduino. Ces dernières prennent les appellations suivantes : `pin_mode_output()`, `pin_mode_input()`, `digital_write()` et `digital_read()`.
 
 ## Étape 2 : Ajout de la nouvelle cible ESP32
@@ -72,11 +72,11 @@ rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
 ## Commande de compilation
 Pour compiler le projet, utilisez la commande suivante pour l'ATmega328P:
 ```bash
-cargo +nightly build --target avr-unknown-gnu-atmega328 --release --features atmega328
+cargo +nightly build -Z build-std=core --target avr-unknown-gnu-atmega328 --release --features atmega
 ```
 ou pour l'ESP32 :
 ```bash
-cargo +nightly build -Z build-std=core,alloc --target xtensa-esp32-none-elf --features esp32
+cargo +nightly build -Z build-std=core,alloc --target xtensa-esp32-none-elf --release --features esp32
 ```
 
 
