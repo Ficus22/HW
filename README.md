@@ -105,3 +105,12 @@ About your use of features, you have to use the same name in the feature declara
 I recommand you to optimise your code into different file module, instead of writing your code into one big file.
 You didn't implement the USART feature.
 Are you using the generic esp32 series as second target? ( https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf ) ?
+
+
+
+
+
+[CORRECTION SPI] (don't hesitate to remove this part)
+You should implement the peripheral/slave mode as well (not only the controler/master mode).
+You could organize your project into multiple file and folder (module file/folder for example).
+You are not supposed to use an external HAL (esp32_hal), you should abstract the hardware yourself.
