@@ -1,4 +1,4 @@
-# Rapport d'analyse détaillée du projet
+# Rapport d'analyse du projet
 
 ## Arborescence du projet
 ```css
