@@ -1,5 +1,3 @@
-Voici la version mise à jour de votre README, incluant une nouvelle section **Étape 2** qui traite de l'ajout de la nouvelle cible ESP32 :
-
 # Projet HAL
 
 ## Équipe
