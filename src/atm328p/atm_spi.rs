@@ -3,24 +3,43 @@ const SPCR: *mut u8 = 0x2C as *mut u8; // SPI Control Register
 const SPSR: *mut u8 = 0x2D as *mut u8; // SPI Status Register
 const SPDR: *mut u8 = 0x2E as *mut u8; // SPI Data Register
 
-
-// Initialisation SPI
-pub fn spi_init() {
+/// Initialisation de l'interface SPI en mode maître
+pub fn spi_init_master() {
     unsafe {
-        *SPCR = (1 << 6) | (1 << 4) | (1 << 5); // Enable SPI, Set as Master, Set Clock Rate fck/16
+        // Configurer SPCR : SPI enable, Master mode, Fclk/16
+        *SPCR = (1 << 6) | (1 << 4) | (1 << 0); // SPE=1, MSTR=1, SPR0=1 (fosc/16)
     }
 }
 
-// Envoie de la data via SPI
-pub fn spi_send(data: u8) {
+/// Initialisation de l'interface SPI en mode esclave
+pub fn spi_init_slave() {
     unsafe {
-        *SPDR = data; // Load data into the buffer
-        while (*SPSR & (1 << 7)) == 0 {} // Wait until transmission complete
+        // Configurer SPCR : SPI enable, Slave mode
+        *SPCR = 1 << 6; // SPE=1 (Enable SPI), MSTR=0 (Slave mode par défaut)
     }
 }
 
-// Reception de la data via SPI
-pub fn spi_receive() -> u8 {
-    spi_send(0xFF); // Send dummy byte to generate clock
-    unsafe { *SPDR } // Read received data from the buffer
+/// Envoi de données via SPI (mode maître)
+pub fn spi_master_send(data: u8) {
+    unsafe {
+        *SPDR = data; // Charger les données dans le registre SPDR
+        while (*SPSR & (1 << 7)) == 0 {} // Attendre que la transmission soit terminée (SPIF = 1)
+    }
+}
+
+/// Réception de données via SPI (mode esclave)
+pub fn spi_slave_receive() -> u8 {
+    unsafe {
+        while (*SPSR & (1 << 7)) == 0 {} // Attendre que la réception soit terminée (SPIF = 1)
+        *SPDR // Lire les données reçues depuis le registre SPDR
+    }
+}
+
+/// Échange de données (full-duplex)
+pub fn spi_transfer(data: u8) -> u8 {
+    unsafe {
+        *SPDR = data; // Charger les données dans le registre SPDR
+        while (*SPSR & (1 << 7)) == 0 {} // Attendre que la transmission/réception soit terminée
+        *SPDR // Retourner les données reçues
+    }
 }
