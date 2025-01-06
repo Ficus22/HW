@@ -40,14 +40,21 @@ pub fn fn_ex() -> ! {
 
 
     //---------SPI---------
-    spi_init();
-
-    // Envoi de données
-    let data_to_send: u8 = 0x55; // Exemple : 0x55
-    spi_send(data_to_send);
-
-    // Réception de données
-    let received_data = spi_receive();
+    // Initialisation SPI en mode maître
+    spi_init_master();
+    
+    // Envoi d'un message en mode maître
+    let data_to_send: u32 = 0x1234ABCD;
+    let mut result: u8;
+    for byte in &data_to_send.to_be_bytes() {
+        result = spi_transfer(*byte); // Envoi de chaque octet et réception simultanée
+    }
+    
+    // Initialisation SPI en mode esclave
+    spi_init_slave();
+    
+    // Réception de données en mode esclave
+    let received_data = spi_slave_receive();
 
 
     //---------I2C---------
